@@ -39,8 +39,8 @@ import java.util.concurrent.*;
  *
  * @author Twin
  */
-public class HttpHelper {
-    private static final Logger logger = Logger.getLogger(HttpHelper.class);
+public class HttpClientDownloader {
+    private static final Logger logger = Logger.getLogger(HttpClientDownloader.class);
     private static final String REQUEST_TYPE_GET = "get";
     private static final String REQUEST_TYPE_POST = "post";
     private static HttpHandle httpHandle;
@@ -52,7 +52,7 @@ public class HttpHelper {
     }
 
     public static void main(String[] args) throws IOException {
-        HttpHelper httpHelper = new HttpHelper();
+        HttpClientDownloader httpHelper = new HttpClientDownloader();
         String url = "http://newpaper.dahe.cn/hnrbncb/html/2016-12/08/content_101627.htm";
         ResponseBean responseBean = httpHelper.sendRequest(url);
         System.out.println(responseBean.getCharset());
@@ -409,9 +409,9 @@ public class HttpHelper {
     public ResponseBean sendRequest(String url, String type, Map<String, String> params) {
         ResponseBean page = null;
         // GET方式请求
-        if (HttpHelper.REQUEST_TYPE_GET.equals(type)) {
+        if (HttpClientDownloader.REQUEST_TYPE_GET.equals(type)) {
             page = sendGetRequest(url, params);
-        } else if (HttpHelper.REQUEST_TYPE_POST.equals(type)) {
+        } else if (HttpClientDownloader.REQUEST_TYPE_POST.equals(type)) {
             // POST方式请求
             page = sendPostRequest(url, params);
         }

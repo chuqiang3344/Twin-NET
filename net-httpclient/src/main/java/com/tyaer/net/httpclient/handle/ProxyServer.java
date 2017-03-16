@@ -2,7 +2,7 @@ package com.tyaer.net.httpclient.handle;
 
 import com.google.common.base.Joiner;
 import com.tyaer.net.httpclient.bean.ResponseBean;
-import com.tyaer.net.httpclient.downloader.HttpHelper;
+import com.tyaer.net.httpclient.downloader.HttpClientDownloader;
 import com.tyaer.net.httpclient.manager.HttpClientManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -65,7 +65,7 @@ public class ProxyServer {
         if (StringUtils.isNotBlank(cookie)) {
             httpGet.setHeader("Cookie", cookie);
         }
-        return HttpHelper.sendRequstGetPage(httpGet);
+        return HttpClientDownloader.sendRequstGetPage(httpGet);
     }
 
     private String getAuthHeader() {
@@ -129,7 +129,7 @@ public class ProxyServer {
         HttpClientContext context = HttpClientContext.create();
         context.setAuthCache(authCache);
         context.setCredentialsProvider(credsProvider);
-        return HttpHelper.sendRequstGetPage(httpGet, context);
+        return HttpClientDownloader.sendRequstGetPage(httpGet, context);
     }
 
     private void setProxy(HttpClientContext context) {

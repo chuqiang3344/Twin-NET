@@ -36,10 +36,10 @@ public class HttpCounselor {
                 return getArticleHtml(url, cookie, queue);
             } else {
                 HttpHost httpHost = queue.poll();
-                responseBean = HttpHelper.sendRequest(url, httpHost, cookie);
+                responseBean = HttpClientDownloader.sendRequest(url, httpHost, cookie);
             }
         } else {
-            responseBean = HttpHelper.sendRequest(url, cookie);
+            responseBean = HttpClientDownloader.sendRequest(url, cookie);
             if (responseBean.getStatusCode() == 501) {
                 logger.warn("###启用切换代理访问模式...");
                 useProxy = true;
@@ -67,9 +67,9 @@ public class HttpCounselor {
                 if (httpHost == null) {
                     logger.warn("queue无可用代理！");
                 }
-                responseBean = HttpHelper.sendRequest(url, httpHost, cookie);
+                responseBean = HttpClientDownloader.sendRequest(url, httpHost, cookie);
             } else {
-                responseBean = HttpHelper.sendRequest(url, cookie);
+                responseBean = HttpClientDownloader.sendRequest(url, cookie);
             }
             if (responseBean.getStatusCode() == 200) {
                 break;
