@@ -18,6 +18,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.log4j.Logger;
 
 import javax.net.ssl.SSLContext;
@@ -47,7 +48,7 @@ public class HttpClientManager {
      */
     private int SOCKET_TIMEOUT;
     /**
-     * 获取httpclient的最大等待时间
+     * 获取连接的最大等待时间
      */
     private int CONNECTION_REQUEST_TIMEOUT;
 
@@ -62,13 +63,32 @@ public class HttpClientManager {
         init();
     }
 
+    /**
+     * 简单设置
+     *
+     * @return
+     */
+    public static RequestConfig getRequestConfigBuild() {
+        int time = 5000;
+        RequestConfig build = RequestConfig.custom()
+                .setConnectionRequestTimeout(time)
+                .setSocketTimeout(time)
+                .setConnectTimeout(time)
+                .setCookieSpec(CookieSpecs.STANDARD_STRICT).build();
+        return build;
+    }
+
     private void init() {
         CONNECTION_TIMEOUT = HttpConfig.CONNECTION_TIMEOUT;
         SOCKET_TIMEOUT = HttpConfig.SOCKET_TIMEOUT;
         CONNECTION_REQUEST_TIMEOUT = 10000;
 
+//        connectionManager = getHttpConnectionManager(); //Http
         connectionManager = getHttpsConnectionManager(); //Https
 //            connectionManager = new PoolingHttpClientConnectionManager();//默认
+        /**
+         * 最大连接数
+         */
         connectionManager.setMaxTotal(HttpConfig.MAX_TOTAL_CONNECTIONS);//最大连接数
         /**
          * 每个路由最大连接数,设置每个主机地址的并发数
@@ -83,7 +103,6 @@ public class HttpClientManager {
         // 连接存活策略
         myStrategy = new ConnectionKeepAliveStrategyImpl();
         // 请求重试策略
-
         myRequestRetryHandler = new HttpRequestRetryHandlerImpl(2);//retryTimes
 
         //RequestConfig基本设置
@@ -100,11 +119,21 @@ public class HttpClientManager {
         CLOSEABLEHTTPCLIENT_INSTANCE = generateClient();
     }
 
+    private PoolingHttpClientConnectionManager getHttpConnectionManager() {
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+//                .register("http", PlainConnectionSocketFactory.INSTANCE)
+//                .register("https", buildSSLConnectionSocketFactory())
+                .build();
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
+        return connectionManager;
+    }
 
     private PoolingHttpClientConnectionManager getHttpsConnectionManager() {
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.INSTANCE)
-                .register("https", buildSSLConnectionSocketFactory())
+//                .register("http", PlainConnectionSocketFactory.INSTANCE)
+//                .register("https", buildSSLConnectionSocketFactory()) //自定义
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", SSLConnectionSocketFactory.getSocketFactory()) //默认配置
                 .build();
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(registry);
         return connectionManager;
@@ -112,6 +141,7 @@ public class HttpClientManager {
 
     private SSLConnectionSocketFactory buildSSLConnectionSocketFactory() {
         try {
+//            return new SSLConnectionSocketFactory(SSLContexts.createDefault());
             return new SSLConnectionSocketFactory(createIgnoreVerifySSL()); // 优先绕过安全证书
         } catch (KeyManagementException e) {
             logger.error("ssl connection fail", e);
@@ -139,7 +169,11 @@ public class HttpClientManager {
                 return new X509Certificate[0];
             }
         };
-        SSLContext sc = SSLContext.getInstance("SSLv3");
+//        SSLContext sc = SSLContext.getInstance("TLS"); //默认
+        SSLContext sc = SSLContext.getInstance("SSLv3");//TODO 不兼容低版本？https://idol001.com/news/7004/detail/580d81fd7a11731f778b4725/
+//        SSLContext sc = SSLContext.getInstance("TLSv1.2,TLSv1.1,TLSv1.0,SSLv3,SSLv2Hello");
+//        SSLContext sc = SSLContext.getInstance("SSLv2Hello");
+//        SSLContext sc = SSLContext.getDefault();
         sc.init(null, new TrustManager[]{trustManager}, null);
         return sc;
     }
@@ -169,7 +203,6 @@ public class HttpClientManager {
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
         return sslsf;
     }
-
 
     public CloseableHttpClient getHttpClient() {
         if (CLOSEABLEHTTPCLIENT_INSTANCE == null) {

@@ -42,12 +42,12 @@ public class HttpHandle {
      * 方法名：getCharsetFromMetaTag
      * 描述：从meta标签中获取编码格式
      *
-     * @param buffer
+     * @param bytes
      * @return
      */
-    public static String getCharsetFromMetaTag(ByteArrayBuffer buffer) {
+    public static String getCharsetFromMetaTag(byte[] bytes) {
         String charset = null;
-        String html = new String(buffer.toByteArray());
+        String html = new String(bytes);
         Document document = Jsoup.parse(html);
         Elements elements = document.select("meta");
         for (Element metaElement : elements) {
@@ -120,7 +120,7 @@ public class HttpHandle {
         System.out.println(getCharSet(xx));
     }
 
-    public static String getCharset(HttpEntity entity, ByteArrayBuffer byteArrayBuffer) {
+    public static String getCharset(HttpEntity entity, byte[] bytes) {
         String encoding = null;
         /**
          * 仿浏览器获取网页编码
@@ -135,11 +135,12 @@ public class HttpHandle {
         }
         //第二步：如果第一步contenttyp未获取到编码，这里从meta标签中获取
         if (StringUtils.isBlank(encoding) || ArrayUtils.contains(ERROR_ENCODING, encoding.toUpperCase())) {
-            encoding = getCharsetFromMetaTag(byteArrayBuffer);
+            encoding = getCharsetFromMetaTag(bytes);
         }
         if (StringUtils.isBlank(encoding)) {
             //未获取到，则赋予默认值
             encoding = "GB2312";
+            logger.debug("未获取到，则赋予默认的编码值："+encoding);
         }
         return encoding.trim();
     }
@@ -206,6 +207,7 @@ public class HttpHandle {
         return encoding;
     }
 
+    //没记错的话，HttpReponse的inputstream默认是gzip解压之后的结果
     public ByteArrayBuffer readToByteBuffer(HttpEntity entity) throws IOException {
         ByteArrayBuffer byteArrayBuffer = new ByteArrayBuffer(4096);
         //判断返回的数据流是否采用了gzip压缩
@@ -295,4 +297,9 @@ public class HttpHandle {
         src = src.replaceAll("&", "&");
         return src;
     }
+
+
+
+
+
 }

@@ -38,7 +38,6 @@ public class HttpClientManagerParams {
             "Mozilla/5.0(Macintosh;U;IntelMacOSX10.5;en-US;rv:1.9.0.1)Gecko/2008070206",
             "Mozilla/5.0(X11;Ubuntu;Linuxx86_64;rv:24.0)Gecko/20100101Firefox/24.0",
             "Mozilla/5.0(compatible;U;ABrowse0.6;Syllable)AppleWebKit/420+(KHTML,likeGecko)",
-            "Mozilla/5.0(compatible;MSIE8.0;WindowsNT6.0;Trident/4.0;AcooBrowser1.98.744;.NETCLR3.5.30729)",
             "Mozilla/4.0(compatible;MSIE7.0;WindowsNT6.0;AcooBrowser;GTB5;Mozilla/4.0(compatible;MSIE6.0;WindowsNT5.1;SV1);Maxthon;InfoPath.1;.NETCLR3.5.30729;.NETCLR3.0.30618)",
             "Mozilla/4.0(compatible;MSIE7.0;AmericaOnlineBrowser1.1;WindowsNT5.1;(R11.5);.NETCLR2.0.50727;InfoPath.1)",
             "Mozilla/4.0(compatible;MSIE7.0;AmericaOnlineBrowser1.1;rev1.5;WindowsNT5.1;.NETCLR1.1.4322;.NETCLR2.0.50727)",
@@ -166,7 +165,6 @@ public class HttpClientManagerParams {
 //		微博
 //		String url="http://weibo.com/1026427652/E6QSaFvKQ?from=page_1005051026427652_profile&wvr=6&mod=weibotime&type=comment";
         System.out.println(url);
-        Pattern pattern = Pattern.compile("\\$CONFIG\\['bigpipe'\\] = '(.*?)';");
         for (int i = 0; i < length; i++) {
             CloseableHttpClient aDefault = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(url);
@@ -185,6 +183,8 @@ public class HttpClientManagerParams {
                     System.out.println("parseWeiboUser 出现另一种源码");
                     System.out.println(i + " " + userAgent);
                     System.out.println(html);
+                }else{
+                    System.out.println("ok");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

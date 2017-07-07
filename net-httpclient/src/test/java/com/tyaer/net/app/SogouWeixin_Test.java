@@ -22,6 +22,7 @@ public class SogouWeixin_Test {
     private static Logger logger=Logger.getLogger(SogouWeixin_Test.class);
 
     private static HttpHost httpHost=new HttpHost("svnserver", 808);
+    static HttpClientDownloader httpClientDownloader=new HttpClientDownloader();
 
     static {
         PropertyConfigurator.configure(SogouWeixin_Test.class.getClassLoader().getResourceAsStream("log4j.properties"));
@@ -35,7 +36,7 @@ public class SogouWeixin_Test {
 //        ResponseBean responseBean = HttpHelper.sendRequest("http://mp.weixin.qq.com/s?src=3&timestamp=1483431559&ver=1&signature=OXnduH3DKYmsU7OdX-Lyp6hhgzRbSkpxCKB*Oz5s19DdXD4sb1WyBUWRbu9aLmP5jOeBxJQmxZWidbevjbpsPFOncAVom0Z3ye37iD81aiRUGzjo4sbzWXJXPNI4eZYtLJEb0vL3gI983etL8WO8NHIpw9GUKkF3g8438ldu0B4=&uin=Nxzzxczxczxc");
 //        ResponseBean responseBean = HttpHelper.sendRequest("http://ent.163.com/photoview/00B50003/621309.html");
 //        ResponseBean responseBean = HttpHelper.sendRequest("http://pb.sogou.com/pv.gif?uigs_t=1483950070110&uigs_productid=weixin&type=weixin_search_pc&pagetype=index&wuid=undefined&uigs_uuid=1483950069921410&login=0&uigs_refer=&");
-        ResponseBean responseBean = HttpClientDownloader.sendRequest("http://weixin.sogou.com/websearch/weixin/pc/anti_account.jsp?t=1483949585912&signature=Phd0UXLFoMX73BHdNwt*-6NZC8hwSJk62uD*9XtyjSTy4scaNu9AcPAE-deC5u5RmFk5kTcwo9siI5kFz9NHuvofuLb1bAa0sai3Q3P6oKIuY9S3VtcL26Z*y00709QZHuBl3O3AzNk*89tQhbhYvsgvd9*zFsHQadQs4y0J6P0QaBpVn3CrSa2yMCDcaBOODqtzEEYc5w-bpqBBwhSZMp4nibEYbxrni14meOcP9yJl3sqCUv8NvN8yfDgV7J2ze7-HSGym9BSNVMZCNe6npkXEC7Z693INXZQ5umJAudDfL7B*Z4TSANvfz2khv1am3Hkw7YcKLImm332Zx7bgnZS25r62efPVUAdRl42-plNRLkITpeoHK4RTxsL3y**xzlb23XYn8*vvp8kQXbtDcBjDZQH9-4xI4UL6D*ABBzuNMZMF-USRnrqSyGWyrR9GIjNzNO*0eUcMEOhRthTSyBGmGDPEVBP3aqKJ9LZjNEReJ5TNsUS2wam9WziDqD-jaxfKK6DxOorgpYNX7*jGw3TyB6GqRpRpi5Nr*bqWSEXd4YenIytjIAACvJC57ywttONqL8VAaKaTAlMaa9wifCRjBBVcNDANaW1v9kdDQlEXBwLeOtO8ci471C*97KJwp2At7SkkSTP4lvp5ecpqH7UMe4x1iBBD8KMvz1wqXoNxv4jqrHAc4YJ7d6D9SXbpjfoAW1xjx9mWa*d0N09NRa*F9aCyd5VybWXbYIz8ZRRCR5J7hoXOS4LxdXhctOGcZK*dAsgrxT6PA6bpNAKbN3p6cHMGjK1DXITQ0gDkgig=");
+        ResponseBean responseBean = httpClientDownloader.sendRequest("http://weixin.sogou.com/websearch/weixin/pc/anti_account.jsp?t=1483949585912&signature=Phd0UXLFoMX73BHdNwt*-6NZC8hwSJk62uD*9XtyjSTy4scaNu9AcPAE-deC5u5RmFk5kTcwo9siI5kFz9NHuvofuLb1bAa0sai3Q3P6oKIuY9S3VtcL26Z*y00709QZHuBl3O3AzNk*89tQhbhYvsgvd9*zFsHQadQs4y0J6P0QaBpVn3CrSa2yMCDcaBOODqtzEEYc5w-bpqBBwhSZMp4nibEYbxrni14meOcP9yJl3sqCUv8NvN8yfDgV7J2ze7-HSGym9BSNVMZCNe6npkXEC7Z693INXZQ5umJAudDfL7B*Z4TSANvfz2khv1am3Hkw7YcKLImm332Zx7bgnZS25r62efPVUAdRl42-plNRLkITpeoHK4RTxsL3y**xzlb23XYn8*vvp8kQXbtDcBjDZQH9-4xI4UL6D*ABBzuNMZMF-USRnrqSyGWyrR9GIjNzNO*0eUcMEOhRthTSyBGmGDPEVBP3aqKJ9LZjNEReJ5TNsUS2wam9WziDqD-jaxfKK6DxOorgpYNX7*jGw3TyB6GqRpRpi5Nr*bqWSEXd4YenIytjIAACvJC57ywttONqL8VAaKaTAlMaa9wifCRjBBVcNDANaW1v9kdDQlEXBwLeOtO8ci471C*97KJwp2At7SkkSTP4lvp5ecpqH7UMe4x1iBBD8KMvz1wqXoNxv4jqrHAc4YJ7d6D9SXbpjfoAW1xjx9mWa*d0N09NRa*F9aCyd5VybWXbYIz8ZRRCR5J7hoXOS4LxdXhctOGcZK*dAsgrxT6PA6bpNAKbN3p6cHMGjK1DXITQ0gDkgig=");
         out(responseBean);
     }
 
@@ -61,9 +62,9 @@ public class SogouWeixin_Test {
 //        HttpHost httpHost = new HttpHost("47.90.74.111", 8088);
 //        HttpHost httpHost = new HttpHost("117.169.86.143", 80);
 //        HttpHost httpHost = new HttpHost("27.219.45.44", 8998);
-        ResponseBean responseBean1 = HttpClientDownloader.sendRequest(detectProxyUrl,httpHost);
+        ResponseBean responseBean1 = httpClientDownloader.sendRequest(detectProxyUrl,httpHost);
         out(responseBean1);
-        ResponseBean responseBean = HttpClientDownloader.sendRequest(url,httpHost);
+        ResponseBean responseBean = httpClientDownloader.sendRequest(url,httpHost);
         out(responseBean);
 
     }
@@ -73,7 +74,7 @@ public class SogouWeixin_Test {
 
         String url="http://weixin.sogou.com/weixin?type=2&query=%E6%91%A9%E6%8B%9C&ie=utf8&_sug_=y&_sug_type_=&w=01015002&oq=mob&ri=0&sourceid=sugg&stj=0%3B0%3B0%3B0&stj2=0&stj0=0&stj1=0&hp=36&hp1=&sut=1888&sst0=1482283952313&lkt=4%2C1482283950258%2C1482283952210";
         HttpHost httpHost = new HttpHost("svnserver", 808);
-        ResponseBean responseBean1 = HttpClientDownloader.sendRequest(url,httpHost);
+        ResponseBean responseBean1 = httpClientDownloader.sendRequest(url,httpHost);
         out(responseBean1);
     }
 
@@ -106,7 +107,7 @@ public class SogouWeixin_Test {
             String searchUrl=url.replace("(keyword)", keyword).trim();
 //            System.out.println(searchUrl);
 //            String com.tyaer.net.cookie ="";
-            ResponseBean responseBean1 = HttpClientDownloader.sendRequest(searchUrl, cookie2);
+            ResponseBean responseBean1 = httpClientDownloader.sendRequest(searchUrl, cookie2);
 //        out(responseBean1);
             String html = responseBean1.getRawText();
 //            System.out.println(html);

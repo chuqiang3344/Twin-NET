@@ -23,11 +23,17 @@ public class PhantomjsDownloader {
 
     public static void main(String[] args) throws IOException {
         PhantomjsDownloader phantomjsHelper = new PhantomjsDownloader();
-        String url = "http://society.qq.com/a/20170308/015629.htm#p=3";
-        long waitingTime = 3000;
+//        String url = "http://www.toutiao.com/search/?keyword=教育局举报";
+        String url = "http://www.site-digger.com/html/articles/20110516/proxieslist.html";
+//        String url = "http://weibo.com/1239246050/EyinWrrtf?filter=hot&root_comment_id=4081738542586091&type=comment";
+        long waitingTime = 10000;
 //        System.out.println(phantomjsHelper.download(url, 0));
         System.out.println(phantomjsHelper.download(url, waitingTime));
         phantomjsHelper.close();
+    }
+
+    private void setCookie(){
+//        driver.manage().
     }
 
     public String download(String url, long waitingTime) {

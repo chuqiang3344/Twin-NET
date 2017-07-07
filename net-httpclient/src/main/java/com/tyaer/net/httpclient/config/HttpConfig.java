@@ -19,6 +19,11 @@ public class HttpConfig {
         Properties properties = new Properties();
         BufferedInputStream in = null;
         try {
+//            System.out.println(HttpConfig.class.getResource("/"));
+//            System.out.println(HttpConfig.class.getResource("/http.properties"));
+//            System.out.println(HttpConfig.class.getClassLoader().getResource(""));
+//            System.out.println(HttpConfig.class.getClassLoader().getResource("http.properties"));
+
             in = new BufferedInputStream(HttpConfig.class.getResourceAsStream("/http.properties"));
             properties.load(in);
             MAX_TOTAL_CONNECTIONS = Integer.parseInt(properties.getProperty("MAX_TOTAL_CONNECTIONS"));

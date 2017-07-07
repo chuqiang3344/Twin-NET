@@ -1,50 +1,53 @@
 package com.tyaer.net.httpclient.utils;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
+import org.apache.http.impl.cookie.BasicClientCookie;
 
-import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Created by Twin on 2017/1/10.
+ * Created by Twin on 2017/3/20.
  */
 public class CookieUtils {
-    // 创建CookieStore实例
-//    private CookieStore cookieStore = null;
-//    private HttpClientContext context = null;
-    private static RequestConfig defaultRequestConfig;
 
-    static {
-        //RequestConfig基本设置
-        defaultRequestConfig = RequestConfig
-                .custom()
-                .setCookieSpec(CookieSpecs.STANDARD_STRICT)//获取cookie时必须设置，光set可以设置为IGNORE_COOKIES
-//                .setExpectContinueEnabled(true)//期望连接
-//                .setStaleConnectionCheckEnabled(true) //检查旧连接
-//                .setTargetPreferredAuthSchemes(Arrays.asList(AuthSchemes.NTLM, AuthSchemes.DIGEST))
-//                .setProxyPreferredAuthSchemes(Arrays.asList(AuthSchemes.BASIC))
-                .build();
+    /**
+     * 分析cookies参数
+     *
+     * @param cookies
+     * @return
+     */
+    public static Map<String, String> analyzeCookies(String cookies) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        String[] split = cookies.split(";");
+        for (String cookie : split) {
+            System.out.println(cookie);
+            String[] kv = cookie.split("=");
+            if (kv.length > 1) {
+                hashMap.put(kv[0], kv[1]);
+            }
+        }
+        return hashMap;
     }
 
-    // 创建一个本地Cookie存储的实例
-    CookieStore cookieStore = new BasicCookieStore();
-    //创建一个本地上下文信息
-    HttpContext localContext = new BasicHttpContext();
+    public static CookieStore generateCookieStore(String cookieStr) {
+        CookieStore cookieStore = new BasicCookieStore();
+        if(StringUtils.isNotBlank(cookieStr)){
+            Map<String, String> map = analyzeCookies(cookieStr);
+            for (String key : map.keySet()) {
+                BasicClientCookie cookie = new BasicClientCookie(key, map.get(key));
+//                cookie.setDomain(site.getDomain());
+                cookieStore.addCookie(cookie);
+            }
+        }
+        return cookieStore;
+    }
 
-    public String getCookieStr(List<Cookie> cookieList) {
+    public static String getCookieStr(List<Cookie> cookieList) {
         StringBuffer buffer = new StringBuffer();
         for (Cookie cookie : cookieList) {
             buffer.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
@@ -53,33 +56,8 @@ public class CookieUtils {
         return cookie_str;
     }
 
-    public String getWebCookie(List<String> urls) {
-        String cookieStr = null;
-        CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(defaultRequestConfig).build();
-        for (String url : urls) {
-            HttpGet httpGet = new HttpGet(url);
-            httpGet.setHeader("User-Agent", "Mozilla/5.0 (Linux; U; Android 4.2.2; zh-cn; GT-P5210 Build/JDQ39E) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30 MicroMessenger/6.3.30.920 NetType/WIFI Language/zh_CN");
-            httpGet.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-            httpGet.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            //在本地上下问中绑定一个本地存储
-            localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-            HttpResponse response = null;
-            try {
-                response = httpClient.execute(httpGet, localContext);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            HttpEntity entity = response.getEntity();
-            List<Cookie> cookies = cookieStore.getCookies();
-            cookieStr = getCookieStr(cookies);
-            try {
-                EntityUtils.consume(entity);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            httpGet.releaseConnection();
-        }
-        return cookieStr;
+    public static void main(String[] args) {
+        String cookie="ALC=ac%3D2%26bt%3D1490194718%26cv%3D5.0%26et%3D1521730718%26scf%3D%26uid%3D6108180470%26vf%3D0%26vs%3D0%26vt%3D0%26es%3D83aa6fc09f889a3bb7bbb4651812137f;ALF=1521730718;LT=1490194719;SUB=_2A2511uFODeRxGeBP61oQ-C7IzDyIHXVWolWGrDV_PUJbm9BeLUPCkW8bSz5v-3WDFWaUERqBWdbh7CCn1w..;SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9W5ykf6kg2mCLg_E_Ep99F5j5NHD95QceK5ReKn7ShM7Ws4Dqcj_i--ci-zfiKnpi--NiKnpi-8Fi--Xi-zRi-zci--Xi-z4iKyFi--ci-82iKyh;sso_info=v02m6alo5qztKWRk5ilkKOUpY6DhKWRk5yljoOEpZCUiKWRk5ClkKOgpZCjmKWRk5ClkKOkpY6EiKWRk5ilkJSQpY6EjKadlqWkj5OYsYyDoLGOg4C0jbOAwA==;tgc=TGT-NjEwODE4MDQ3MA==-1490194718-gz-8B62536101FC48937B6D860FE9C00A7B-1;";
+        analyzeCookies(cookie);
     }
-
 }

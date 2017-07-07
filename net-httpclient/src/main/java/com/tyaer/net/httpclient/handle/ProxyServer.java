@@ -6,6 +6,7 @@ import com.tyaer.net.httpclient.downloader.HttpClientDownloader;
 import com.tyaer.net.httpclient.manager.HttpClientManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AUTH;
 import org.apache.http.auth.AuthScope;
@@ -14,14 +15,20 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,10 +41,14 @@ import java.util.*;
 public class ProxyServer {
 
     private static final Logger logger = Logger.getLogger(ProxyServer.class);
+    private static HttpClientDownloader httpClientDownloader;
     private static HttpClientManager HTTPCLIENTMANAGER;
+    private static HttpHandle httpHandle;
 
     static {
         HTTPCLIENTMANAGER = new HttpClientManager();
+        httpClientDownloader=new HttpClientDownloader();
+        httpHandle = new HttpHandle();
     }
 
     /**
@@ -65,7 +76,7 @@ public class ProxyServer {
         if (StringUtils.isNotBlank(cookie)) {
             httpGet.setHeader("Cookie", cookie);
         }
-        return HttpClientDownloader.sendRequstGetPage(httpGet);
+        return httpClientDownloader.sendRequstGetPage(httpGet);
     }
 
     private String getAuthHeader() {
@@ -129,7 +140,38 @@ public class ProxyServer {
         HttpClientContext context = HttpClientContext.create();
         context.setAuthCache(authCache);
         context.setCredentialsProvider(credsProvider);
-        return HttpClientDownloader.sendRequstGetPage(httpGet, context);
+        return sendRequstGetPage(httpGet, context);
+    }
+
+    public ResponseBean sendRequstGetPage(HttpRequestBase request, HttpContext httpContext) {
+        ResponseBean page = new ResponseBean();
+        String html;
+        String url = request.getURI().toString();
+        CloseableHttpClient httpClient = HTTPCLIENTMANAGER.getHttpClient();
+        page.setUrl(url);
+        /**设置请求头*/
+        RequestHandle.setHttpRequestHeader(request, page);
+        try {
+            CloseableHttpResponse response = httpClient.execute(request, httpContext);
+            HttpEntity entity = response.getEntity();
+            byte[] bytes = httpHandle.readToByteBuffer(entity).toByteArray();
+            String charset = httpHandle.getCharset(entity, bytes);
+            page.setCharset(charset);
+            html = new String(bytes, charset);
+            int statusCode = httpHandle.getStatusCode(response);
+            page.setStatusCode(statusCode);
+            //关闭
+            EntityUtils.consume(entity);
+            response.close();
+        } catch (IOException e) {
+            logger.error("logger，requestUrl: " + url);
+            logger.error(ExceptionUtils.getMessage(e));
+            html = ExceptionUtils.getMessage(e);
+        } finally {
+            request.releaseConnection();
+        }
+        page.setRawText(html);
+        return page;
     }
 
     private void setProxy(HttpClientContext context) {

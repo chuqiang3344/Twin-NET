@@ -17,8 +17,9 @@ public class HtmlUnitDownloader extends DownloaderAbs {
 
         HtmlUnitDownloader htmlUnitDownloader = new HtmlUnitDownloader();
 //        String url = "http://society.qq.com/a/20170308/015629.htm#p=3";
-//        String url = "https://passport.baidu.com/v2/?login&tpl=mn&u=http%3A%2F%2Fwww.baidu.com%2F";
-        String url = "http://weibo.com/xuezhiqian?refer_flag=1001030101_&is_all=1";
+        String url = "https://passport.baidu.com/v2/?login&tpl=mn&u=http%3A%2F%2Fwww.baidu.com%2F";
+//        String url = "http://weibo.com/xuezhiqian?refer_flag=1001030101_&is_all=1";
+//        String url = "http://www.toutiao.com/search/?keyword=教育局举报";
 //        String url = "http://blog.csdn.net/five3/article/details/19085303";
         long waitingTime = 3000;
         System.out.println(htmlUnitDownloader.download(url, waitingTime));
