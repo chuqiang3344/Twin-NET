@@ -24,10 +24,10 @@ public class Cookie_Test {
 
     @Test
     public void test1(){
-        String url = "http://weixin.sogou.com/weixin?type=2&ie=utf8&_sug_=n&_sug_type_=&query=深圳";
         CookieObtainer cookieObtainer = new CookieObtainer();
         ArrayList<String> list = new ArrayList<>();
-        list.add(url);
+        //list.add("http://weixin.sogou.com/weixin?type=2&ie=utf8&_sug_=n&_sug_type_=&query=深圳");
+        list.add("https://www.kuaidi100.com/");
         System.out.println(cookieObtainer.obtainUrlCookies(list));
     }
 

@@ -11,8 +11,17 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.cookie.CookieOrigin;
+import org.apache.http.cookie.CookieSpec;
+import org.apache.http.cookie.CookieSpecProvider;
+import org.apache.http.cookie.MalformedCookieException;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.cookie.DefaultCookieSpec;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
 
 import java.io.UnsupportedEncodingException;
@@ -84,13 +93,12 @@ public class RequestHandle {
 
     public static RequestConfig getRequestConfig(int connectTimeout, int socketTimeout) {
         int time = 5000;
-        RequestConfig build = RequestConfig.custom()
+        return RequestConfig.custom()
                 .setConnectionRequestTimeout(time)//获取连接的最大等待时间
                 .setConnectTimeout(connectTimeout)//连接超时时间
                 .setSocketTimeout(socketTimeout)//读取超时时间
                 .setCookieSpec(CookieSpecs.STANDARD_STRICT)
                 .build();
-        return build;
     }
 
     public static void setHttpRequestHeader(HttpRequestBase httpRequestBase, ResponseBean page) {
@@ -173,4 +181,7 @@ public class RequestHandle {
             return reqEntity;
         }
     }
+
+
+
 }
